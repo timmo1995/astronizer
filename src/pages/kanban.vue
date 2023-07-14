@@ -27,16 +27,9 @@
   </template>
   
   <script>
-  // import SystemInformation from '@/components/SystemInformation.vue'
   import mainSidebar from '~/components/mainSidebar.vue'
   import kanbanBucket from '~/components/kanbanBucket.vue'
-  //import * as sqliteAPI from '@/utils/sqliteAPI'
-  //import {checkInitStatus, initDb} from '@/utils/sqliteAPI'
-  // import SQLite from 'tauri-plugin-sqlite-api'
-  // import { appDataDir } from '@tauri-apps/api/path';
   import { emit, listen } from '@tauri-apps/api/event'
-  import Database from "tauri-plugin-sql-api";
-  import {checkInitStatus, initDb } from '@/utils/sqliteAPI' 
   import { getBuckets, updateBuckets } from '@/utils/tauriStoreAPI'
   import { Store } from "tauri-plugin-store-api";
 

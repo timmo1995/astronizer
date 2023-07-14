@@ -33,7 +33,7 @@
   <script>
   
   import kanbanTask from './kanbanTask.vue'
-  import {getTasksOfBucket, updateTasksOfBucket  } from '@/utils/tauriStoreAPI'
+  import {getTasksOfBucket, addTaskToBucket, deleteTask } from '@/utils/tauriStoreAPI'
   
   export default {
   
@@ -53,7 +53,6 @@
 
     async mounted() {
       //Getting Tasks from Storage
-      console.log("stuff")
       let res = await getTasksOfBucket(this.bucketData.id);
       if(res != null ) {
         this.tasks = res;
@@ -66,7 +65,6 @@
 
     methods: {
       async deleteBucket() {
-        console.log("Hello");
         this.$parent.deleteBucket(this.bucketData.id);
       },
 
@@ -83,13 +81,13 @@
           //add one
           taskPos = taskPos +1;
 
-          //
-          this.tasks.push({position: taskPos, title: "This is a task in " + this.bucketData.id , bucket: this.bucketData.id})
+          //create new task
+          let newTask = {position: taskPos, title: "This is a task in " + this.bucketData.id , bucket: this.bucketData.id}
 
-          console.log(this.tasks);
+          this.tasks.push(newTask)
 
           //update
-          await updateTasksOfBucket(this.bucketData.id, this.tasks);
+          await addTaskToBucket(newTask);
 
           this.updateTaskTitles();
 
@@ -108,6 +106,22 @@
         this.taskTitles = titles;
         return true;
       },
+
+      async deleteTaskFromBoard(taskId) {
+        
+        //delete from RAM
+        this.tasks = this.tasks.filter(function(task) {
+          return task.id != taskId;
+        })
+        
+        this.updateTaskTitles();
+
+        //delete from storage
+        await deleteTask(taskId);
+        await this.triggerRender();
+        return true;
+      },
+
 
       triggerRender(){
         this.$forceUpdate();
