@@ -1,0 +1,46 @@
+:root {
+    --primary: #4ade80;
+    --hoverButton: #A9A9A9;
+    --grey: #000000f5;
+    --dark: #1d1d1d;
+    --lighterGrey: #2c2c2c;
+    --dark-alt: #000000;
+    --light: #f1f5f9;
+    --sidebar-width: 250px;
+    --blue: #3a36fa;
+  
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Fira sans', sans-serif;
+  }
+  
+  body {
+    background: var(--grey)
+  }
+  
+  button {
+    cursor: pointer;
+    appearance: none;
+    border: none;
+    outline: none;
+    background: none;
+  }
+  
+  .app {
+     display: flex;
+  
+    main {
+      // flex: 1 1 0;
+      // padding: 2rem;
+  
+      @media (max-width: 768px) {
+        padding-left: 6rem;
+      }
+    }
+  
+  }
+  
