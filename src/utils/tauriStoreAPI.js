@@ -45,31 +45,41 @@ export async function getTasksOfBucket(bucketId) {
 } 
 
 
-//adds a Task
-export async function addTaskToBucket(task) {
+//updates all Tasks of a bucket
+export async function updateTasksOfBucket(bucketID, tasks) {
 
     console.log("start")
     //First get all tasks
     const store = getStore();
     let val = await store.get("tasks");
 
-    if(val == null) {
-        val = [];
-    }
     //Get Highest ID
-    let newId = 0;
-    console.log(val)
-    for(const task of val) {
-        if(task['id'] > newId) {
+    let newId = 1;
+    for(const task in tasks) {
+        if(task.id > newId) {
             newId = task.id
         }
     }
+
     newId = newId + 1;
-    console.log('New id is ' + newId)
+
+    if(val != null) {
+    //remove all with bucket id of tasks
+    val = val.filter(function(task) {
+        return task.bucket != bucketID;
+      })
+      console.log(val);
+    }
+    else {
+        val = [];
+    }
+
     //add the tasks (which are only the ones from the bucket)
-    task.id = newId;
-    console.log(val);
-    val.push(task);
+    for(let task of tasks) {
+        task.id = newId;
+        newId = newId +1;
+        val.push(task);
+    }
 
     //console.log(val);
     //and store it
@@ -81,22 +91,4 @@ export async function addTaskToBucket(task) {
 
     return true;
     
-}
-
-//delets a task
-export async function deleteTask(idToDelete) {
-    const store = getStore();
-    let val = await store.get("tasks");
-
-    val = val.filter(function(task) {
-        return task.id != idToDelete;
-      })
-
-    console.log('Id To Delete is ' + idToDelete)
-    console.log(val)
-    await store.set("tasks",val);
-    await store.save();
-
-    return true;
-
 }
