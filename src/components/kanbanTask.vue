@@ -4,21 +4,25 @@
         {{ taskData.title }}
       </div>
       <div class="kanbanTaskDeleteIcon">
-        <span class="material-icons">close</span>
+        <span class="material-icons" @click="this.deleteTask" >close</span>
       </div>
     </div>
   </template>
   
   <script>
-  
+
+
   export default {
+
+
     props: {
       taskData: {}
     },
 
     methods: {
       async deleteTask() {
-        
+        console.log(this.taskData.id)
+        this.$parent.deleteTaskFromBoard(this.taskData.id);
       }
 
     }
