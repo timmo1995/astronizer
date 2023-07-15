@@ -16,7 +16,7 @@
         </div>
         <div class="kanbanBoard">
           <div v-for="item in buckets" :key="item" class="kanbanBucketArea">
-            <kanbanBucket :bucketData="item" />
+            <kanbanBucket :bucketData="item" draggable="true" @dragstart="startDragBucket($event,item)" @dragenter="onDragEnterBucket($event,item)" />
           </div>
           <div class="addKanbanBoardButton">
             <span class="material-icons" @click="addBucket">add</span>
@@ -50,12 +50,14 @@
         buckets: [],
         bucketNames: [],
         status: false,
+        draggedBucket: {},
       }
     },
   
     async mounted () {
       let result =  await getBuckets();
       this.buckets = result;
+      console.log(this.buckets);
       this.updateBucketNames();
     },
 
@@ -118,7 +120,61 @@
 
     triggerRender(){
         this.$forceUpdate();
-      }
+      },
+
+    startDragBucket(event,bucket) {
+      console.log("Started Dragging");
+      console.log(bucket);
+      event.dataTransfer.dropfEffect = "move";
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('dragBucket', bucket )
+      this.draggedBucket = bucket;
+    },
+
+
+
+    //Muss noch persistet werden
+    onDragEnterBucket(event,enterBucket) {
+      
+
+      if(enterBucket.id != undefined && enterBucket.id !== this.draggedBucket.id) {
+        console.log("Dragged over: ")
+        event.preventDefault();
+        
+        //get indexes in array for the elements to be changed
+        let indexDragged = -1;
+        let indexEntered = -1;
+
+        for(let i=0; i < this.buckets.length; i++) {
+          if(this.buckets.at(i).id == enterBucket.id) {
+            indexEntered = i;
+            console.log(indexEntered);
+          }
+          if(this.buckets.at(i).id == this.draggedBucket.id) {
+            indexDragged = i;
+            console.log(indexDragged)
+          }
+        }
+        
+        console.log(this.buckets);
+        let tempPos = this.buckets.at(indexDragged).position;
+        this.buckets.at(indexDragged).position = this.buckets.at(indexEntered).position
+        this.buckets.at(indexEntered).position = tempPos;
+        
+        this.orderBucketsByPosition();
+        //console.log("Stuff")
+        //console.log(this.buckets);
+        this.triggerRender();
+        //this.$parent.$forceUpdate();
+    }
+  },
+
+  orderBucketsByPosition() {
+        this.buckets = this.buckets.sort(function(a, b) { 
+        return a.position - b.position;
+        })
+      },
+
   }
 
 }
