@@ -15,11 +15,9 @@
           <h2>Kanban Board</h2>
         </div>
         <div class="kanbanBoard">
-          <draggable :list="buckets" class="kanbanBoard" :move="checkMove"  @start="dragging = true" @end="dragging = false">
-            <div v-for="item in buckets" :key="item" class="kanbanBucketArea">
-              <kanbanBucket :bucketData="item" />
-            </div>
-          </draggable>
+          <div v-for="item in buckets" :key="item" class="kanbanBucketArea">
+            <kanbanBucket :bucketData="item" />
+          </div>
           <div class="addKanbanBoardButton">
             <span class="material-icons" @click="addBucket">add</span>
           </div>
@@ -120,11 +118,7 @@
 
     triggerRender(){
         this.$forceUpdate();
-      },
-
-    checkMove: function(e) {
-      window.console.log("Future index: " + e.draggedContext.element.id);
-    }
+      }
   }
 
 }
