@@ -35,8 +35,8 @@
 
 import kanbanTask from './kanbanTask.vue'
 import { getTasksOfBucket, addTaskToBucket, deleteTask } from '@/utils/tauriStoreAPI'
-import { render } from 'sass';
 import { ref, onMounted } from 'vue'
+import { getCurrentInstance } from 'vue'
 
 
 var taskTitles = [];
@@ -44,17 +44,19 @@ const props = defineProps(['bucketData'])
 const renderComponent = ref(true);
 var tasks = []
 
+const emit = defineEmits(['deleteBucket'])
+
 
 onMounted(async () => {
     tasks = await getTasksOfBucket(props.bucketData.id);
     console.log(tasks);
     updateTaskTitles();
-    console.log('hi');
     triggerRender();
 })
 
 async function deleteBucket() {
-  $parent.deleteBucket(props.bucketData.id);
+  //$parent.deleteBucket(props.bucketData.id);
+  emit('deleteBucket', props.bucketData.id)
 }
 
 

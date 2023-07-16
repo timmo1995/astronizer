@@ -1,5 +1,5 @@
 <template>
-    <div class="kanbanWindow">
+    <div class="kanbanWindow" v-if="renderComponent">
       <link
         href="https://fonts.googleapis.com/css2?family=Material+Icons"
         rel="stylesheet"
@@ -16,7 +16,7 @@
         </div>
         <div class="kanbanBoard">
           <div v-for="item in buckets" :key="item" class="kanbanBucketArea">
-            <kanbanBucket :bucketData="item" draggable="true" @dragstart="startDragBucket($event,item)" @dragenter="onDragEnterBucket($event,item)"/>
+            <kanbanBucket :bucketData="item" draggable="true" @dragstart="startDragBucket($event,item)" @dragenter="onDragEnterBucket($event,item)" @deleteBucket="deleteBucket"/>
           </div>
           <div class="addKanbanBoardButton">
             <span class="material-icons" @click="addBucket">add</span>
@@ -26,58 +26,40 @@
     </div>
   </template>
   
-  <script>
+  <script setup>
   import mainSidebar from '~/components/mainSidebar.vue'
   import kanbanBucket from '~/components/kanbanBucket.vue'
   import { emit, listen } from '@tauri-apps/api/event'
   import { getBuckets, updateBuckets } from '@/utils/tauriStoreAPI'
   import { Store } from "tauri-plugin-store-api";
 
+  var buckets= [];
+  var bucketNames =  [];
+  var draggedBucket = {}
+  const renderComponent = ref(true);
 
-  export default {
   
-    name: 'KanbanBoard',
-    components: {
-      // SystemInformation
-      mainSidebar,
-      kanbanBucket
-    },
-
-    data () {
-        
-      return {
-        //kanbanTestItems: ['Input', 'ToDo', 'Done'],
-        buckets: [],
-        bucketNames: [],
-        status: false,
-        draggedBucket: {},
-      }
-    },
-  
-    async mounted () {
+  onMounted(async () => {
       let result =  await getBuckets();
-      this.buckets = result;
-      console.log(this.buckets);
-      this.updateBucketNames();
-    },
+      buckets = result;
+      console.log(buckets);
+      updateBucketNames();
+      triggerRender();
+    })
 
     
-    async created () {
 
-    },
-
-    methods: {
-      openURL (url) {
+  function openURL (url) {
         window.open(url);
-      },
+      }
 
-      async addBucket() {
+  async function addBucket() {
         //get highest current id of buckets and highest position
         let highID =  0;
         var highPos = 0;
-        if(this.buckets.length != 0) {
+        if(buckets.length != 0) {
           console.log("Inside");
-          for (const bucket of this.buckets) {
+          for (const bucket of buckets) {
             if(bucket['position']> highPos) {
               highPos = bucket['position']
             }
@@ -92,52 +74,59 @@
         highID= highID + 1;
         highPos= highPos + 1;
 
-        this.buckets.push({id: highID, name: 'New Bucket', position: highPos});
-        await updateBuckets(this.buckets);
-        this.updateBucketNames();
-        console.log(this.buckets);
-        await this.triggerRender();
+        buckets.push({id: highID, name: 'New Bucket', position: highPos});
+        await updateBuckets(buckets);
+        updateBucketNames();
+        console.log(buckets);
+        await triggerRender();
         return true;
-      },
+      }
 
-      async deleteBucket(bucketId) {
-        this.buckets = this.buckets.filter(function(bucket) {
+  async function deleteBucket(bucketId) {
+        buckets = buckets.filter(function(bucket) {
           return bucket.id != bucketId;
         })
-        await updateBuckets(this.buckets);
-        await this.triggerRender();
+        await updateBuckets(buckets);
+        await triggerRender();
         return true;
-      },
+      }
 
-      updateBucketNames() {
+  function updateBucketNames() {
         let names = []
-        for (const bucket of this.buckets) {
+        for (const bucket of buckets) {
           names.push(bucket['name'])
         }
-        this.bucketNames = names;
+        bucketNames = names;
         return true;
-    }, 
+    }
 
-    triggerRender(){
-        this.$forceUpdate();
-      },
+    const triggerRender = async () => {
+        // Here, we'll remove MyComponent
+        renderComponent.value = false;
 
-    startDragBucket(event,bucket) {
+        // Then, wait for the change to get flushed to the DOM
+        await nextTick();
+
+        // Add MyComponent back in
+        renderComponent.value = true;
+      };
+
+    function startDragBucket(event,bucket) {
       console.log("Started Dragging");
       console.log(bucket);
       event.dataTransfer.dropfEffect = "move";
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('dragBucket', bucket )
-      this.draggedBucket = bucket;
-    },
+      draggedBucket = bucket;
+    }
 
 
 
     //Muss noch persistet werden
-    onDragEnterBucket(event,enterBucket) {
+   function onDragEnterBucket(event,enterBucket) {
       
 
-      if(enterBucket.id != undefined && enterBucket.id !== this.draggedBucket.id) {
+      if(enterBucket.id != undefined && enterBucket.id !== draggedBucket.id) {
         console.log("Dragged over: ")
         event.preventDefault();
         
@@ -145,42 +134,38 @@
         let indexDragged = -1;
         let indexEntered = -1;
 
-        for(let i=0; i < this.buckets.length; i++) {
-          if(this.buckets.at(i).id == enterBucket.id) {
+        for(let i=0; i < buckets.length; i++) {
+          if(buckets.at(i).id == enterBucket.id) {
             indexEntered = i;
             console.log(indexEntered);
           }
-          if(this.buckets.at(i).id == this.draggedBucket.id) {
+          if(buckets.at(i).id == draggedBucket.id) {
             indexDragged = i;
             console.log(indexDragged)
           }
         }
         
-        console.log(this.buckets);
-        let tempPos = this.buckets.at(indexDragged).position;
-        this.buckets.at(indexDragged).position = this.buckets.at(indexEntered).position
-        this.buckets.at(indexEntered).position = tempPos;
+        console.log(buckets);
+        let tempPos = buckets.at(indexDragged).position;
+        buckets.at(indexDragged).position = buckets.at(indexEntered).position
+        buckets.at(indexEntered).position = tempPos;
         
 
-        this.orderBucketsByPosition();
+        orderBucketsByPosition();
 
 
         //persistenting
-        updateBuckets(this.buckets);
+        updateBuckets(buckets);
 
-        this.triggerRender();
+        triggerRender();
     }
-  },
-
-  orderBucketsByPosition() {
-        this.buckets = this.buckets.sort(function(a, b) { 
-        return a.position - b.position;
-        })
-      },
-
   }
 
-}
+ function orderBucketsByPosition() {
+        buckets = buckets.sort(function(a, b) { 
+        return a.position - b.position;
+        })
+      }
   </script>
   
   <css lang="scss">
