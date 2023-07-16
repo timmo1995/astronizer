@@ -41,15 +41,16 @@ import { ref, onMounted } from 'vue'
 
 var taskTitles = [];
 const props = defineProps(['bucketData'])
-var tasks = await getTasksOfBucket(props.bucketData.id);
 const renderComponent = ref(true);
-updateTaskTitles();
+var tasks = []
 
 
-onMounted(() => {
-
-
-  
+onMounted(async () => {
+    tasks = await getTasksOfBucket(props.bucketData.id);
+    console.log(tasks);
+    updateTaskTitles();
+    console.log('hi');
+    triggerRender();
 })
 
 async function deleteBucket() {
