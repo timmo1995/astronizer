@@ -16,7 +16,7 @@
         </div>
         <div class="kanbanBoard">
           <div v-for="item in buckets" :key="item" class="kanbanBucketArea">
-            <kanbanBucket :bucketData="item" draggable="true" @dragstart="startDragBucket($event,item)" @dragenter="onDragEnterBucket($event,item)" />
+            <kanbanBucket :bucketData="item" draggable="true" @dragstart="startDragBucket($event,item)" @dragenter="onDragEnterBucket($event,item)"/>
           </div>
           <div class="addKanbanBoardButton">
             <span class="material-icons" @click="addBucket">add</span>
@@ -161,11 +161,14 @@
         this.buckets.at(indexDragged).position = this.buckets.at(indexEntered).position
         this.buckets.at(indexEntered).position = tempPos;
         
+
         this.orderBucketsByPosition();
-        //console.log("Stuff")
-        //console.log(this.buckets);
+
+
+        //persistenting
+        updateBuckets(this.buckets);
+
         this.triggerRender();
-        //this.$parent.$forceUpdate();
     }
   },
 
@@ -208,6 +211,9 @@
       column-gap: 3rem;
       color: var(--light);
       padding-top: 1.5rem;
+      .list-move {
+          transition: all 0.5s ease;
+      }
   
       .addKanbanBoardButton {
         .material-icons {
