@@ -13,8 +13,8 @@
       </div>
       <div class="bucketBodyArea">
         <div class="kanbanTaskList">
-          <div v-for="item in tasks" :key="item" class="kanbanTaskArea">
-            <kanbanTask :taskData="item" />
+          <div v-for="item in tasks" :key="item" class="kanbanTaskArea" >
+            <kanbanTask :taskData="item" @deleteTask="deleteTaskFromBoard"/>
           </div>
         </div>
         <div class="kanbanAddTaskArea" @click="AddTask">
@@ -39,7 +39,7 @@ import { ref, onMounted } from 'vue'
 import { getCurrentInstance } from 'vue'
 
 
-var taskTitles = [];
+//var taskTitles = [];
 const props = defineProps(['bucketData'])
 const renderComponent = ref(true);
 var tasks = []
@@ -50,7 +50,7 @@ const emit = defineEmits(['deleteBucket'])
 onMounted(async () => {
     tasks = await getTasksOfBucket(props.bucketData.id);
     console.log(tasks);
-    updateTaskTitles();
+   // updateTaskTitles();
     triggerRender();
 })
 
@@ -80,7 +80,7 @@ async function AddTask() {
   //update
   await addTaskToBucket(newTask);
 
-  updateTaskTitles();
+  //updateTaskTitles();
 
   triggerRender();
 
@@ -89,28 +89,29 @@ async function AddTask() {
 
 
 
-async function updateTaskTitles() {
+// async function updateTaskTitles() {
 
-  let titles = []
-  for (const task of tasks) {
-    titles.push(task['title'])
-  }
-  taskTitles = titles;
-  return true;
-}
+//   let titles = []
+//   for (const task of tasks) {
+//     titles.push(task['title'])
+//   }
+//   taskTitles = titles;
+//   return true;
+// }
 
 async function deleteTaskFromBoard(taskId) {
 
+  console.log("hi back")
   //delete from RAM
   tasks = tasks.filter(function (task) {
     return task.id != taskId;
   })
 
-  this.updateTaskTitles();
+ // this.updateTaskTitles();
 
   //delete from storage
   await deleteTask(taskId);
-  await this.triggerRender();
+  await triggerRender();
   return true;
 }
 

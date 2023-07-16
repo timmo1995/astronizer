@@ -1,33 +1,27 @@
 <template>
-    <div class="kanbanTask">
+    <div class="kanbanTask" v-if="renderComponent">
       <div class="kanbanTaskTitle">
         {{ taskData.title }}
       </div>
       <div class="kanbanTaskDeleteIcon">
-        <span class="material-icons" @click="this.deleteTask" >close</span>
+        <span class="material-icons" @click="deleteTask" >close</span>
       </div>
     </div>
   </template>
   
-  <script>
+  <script setup>
+
+    const props = defineProps(['taskData'])
+    const renderComponent = ref(true);
+    const emit = defineEmits(['deleteTask'])
 
 
-  export default {
-
-
-    props: {
-      taskData: {}
-    },
-
-    methods: {
-      async deleteTask() {
-        console.log(this.taskData.id)
-        this.$parent.deleteTaskFromBoard(this.taskData.id);
-      }
-
+    async function deleteTask() {
+          //this.$parent.deleteTaskFromBoard(this.taskData.id);
+      console.log("hi")
+      emit('deleteTask',props.taskData.id);
     }
 
-  }
   
   </script>
   
