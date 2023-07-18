@@ -19,6 +19,7 @@
   "dependencies": {
     "sass": "^1.63.6",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
-    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1"
+    "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",
+    "vuedraggable": "^4.1.0"
   }
 }

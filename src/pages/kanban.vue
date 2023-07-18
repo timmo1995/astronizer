@@ -1,5 +1,5 @@
 <template>
-    <div class="kanbanWindow" v-if="renderComponent">
+    <div class="kanbanWindow" v-if="rendComponent" >
       <link
         href="https://fonts.googleapis.com/css2?family=Material+Icons"
         rel="stylesheet"
@@ -15,16 +15,20 @@
           <h2>Kanban Board</h2>
         </div>
         <div class="kanbanBoard">
-          <div v-for="item in buckets" :key="item" class="kanbanBucketArea">
-            <kanbanBucket :bucketData="item" draggable="true" @dragstart="startDragBucket($event,item)" @dragenter="onDragEnterBucket($event,item)" @deleteBucket="deleteBucket"/>
-          </div>
-          <div class="addKanbanBoardButton">
-            <span class="material-icons" @click="addBucket">add</span>
-          </div>
+        <draggable :list="buckets" :animation="200" group="bucket" ghost-class="ghost" item-key="id" @start="drag=true"  @end="endBucketDrag" class="kanbanBoard" :move="checkMove">
+          <template #item="{element}" class="kanbanBucketArea">
+            <div>
+              <kanbanBucket :bucketData="element" @deleteBucket="deleteBucket"/>
+            </div>
+          </template>
+        </draggable>
+        <div class="addKanbanBoardButton">
+          <span class="material-icons" @click="addBucket">add</span>
         </div>
       </div>
+      </div>
     </div>
-  </template>
+</template>
   
   <script setup>
   import mainSidebar from '~/components/mainSidebar.vue'
@@ -32,11 +36,13 @@
   import { emit, listen } from '@tauri-apps/api/event'
   import { getBuckets, updateBuckets } from '@/utils/tauriStoreAPI'
   import { Store } from "tauri-plugin-store-api";
+import draggable from 'vuedraggable'
+
 
   var buckets= [];
   var bucketNames =  [];
   var draggedBucket = {}
-  const renderComponent = ref(true);
+  const rendComponent = ref(true);
 
   
   onMounted(async () => {
@@ -86,6 +92,10 @@
         buckets = buckets.filter(function(bucket) {
           return bucket.id != bucketId;
         })
+
+        //update positions and store
+        updateBucketPosition();
+
         await updateBuckets(buckets);
         await triggerRender();
         return true;
@@ -102,70 +112,45 @@
 
     const triggerRender = async () => {
         // Here, we'll remove MyComponent
-        renderComponent.value = false;
+        rendComponent.value = false;
 
         // Then, wait for the change to get flushed to the DOM
         await nextTick();
 
         // Add MyComponent back in
-        renderComponent.value = true;
+        rendComponent.value = true;
       };
-
-    function startDragBucket(event,bucket) {
-      console.log("Started Dragging");
-      console.log(bucket);
-      event.dataTransfer.dropfEffect = "move";
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('dragBucket', bucket )
-      draggedBucket = bucket;
-    }
-
-
-
-    //Muss noch persistet werden
-   function onDragEnterBucket(event,enterBucket) {
-      
-
-      if(enterBucket.id != undefined && enterBucket.id !== draggedBucket.id) {
-        console.log("Dragged over: ")
-        event.preventDefault();
-        
-        //get indexes in array for the elements to be changed
-        let indexDragged = -1;
-        let indexEntered = -1;
-
-        for(let i=0; i < buckets.length; i++) {
-          if(buckets.at(i).id == enterBucket.id) {
-            indexEntered = i;
-            console.log(indexEntered);
-          }
-          if(buckets.at(i).id == draggedBucket.id) {
-            indexDragged = i;
-            console.log(indexDragged)
-          }
-        }
-        
-        console.log(buckets);
-        let tempPos = buckets.at(indexDragged).position;
-        buckets.at(indexDragged).position = buckets.at(indexEntered).position
-        buckets.at(indexEntered).position = tempPos;
-        
-
-        orderBucketsByPosition();
-
-
-        //persistenting
-        updateBuckets(buckets);
-
-        triggerRender();
-    }
-  }
 
  function orderBucketsByPosition() {
         buckets = buckets.sort(function(a, b) { 
         return a.position - b.position;
         })
       }
+
+ async function checkMove(e) {
+       console.log("Dragging " + e);
+
+    }
+
+
+ async function endBucketDrag(e) {
+        console.log("Dropped");
+      await triggerRender();
+      console.log(buckets);
+      updateBucketPosition();
+      await updateBuckets(buckets);
+ }
+
+
+ function updateBucketPosition() {
+  for(let i = 0;i<buckets.length;i++) {
+    buckets.at(i).position = i+1;
+  }
+ }
+
+
+
+
   </script>
   
   <css lang="scss">
@@ -199,6 +184,19 @@
       .list-move {
           transition: all 0.5s ease;
       }
+
+      .ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
+
+      .kanbanBucketArea {
+  flex-grow: 0;     /* do not grow   - initial value: 0 */
+  flex-shrink: 0;   /* do not shrink - initial value: 1 */
+  flex-basis: 16rem; /* width/height  - initial value: auto */
+  overflow-wrap: anywhere;
+}
+
   
       .addKanbanBoardButton {
         .material-icons {
@@ -218,11 +216,6 @@
       color: var(--light)
   }
   
-  .kanbanBucketArea {
-  flex-grow: 0;     /* do not grow   - initial value: 0 */
-  flex-shrink: 0;   /* do not shrink - initial value: 1 */
-  flex-basis: 16rem; /* width/height  - initial value: auto */
-  overflow-wrap: anywhere;
-  }
+
   
   </css>

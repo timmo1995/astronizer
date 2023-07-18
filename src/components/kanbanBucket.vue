@@ -13,7 +13,7 @@
       </div>
       <div class="bucketBodyArea">
         <div class="kanbanTaskList">
-          <div v-for="item in tasks" :key="item" class="kanbanTaskArea" >
+          <div v-for="item in tasks" :item-key="item" class="kanbanTaskArea" >
             <kanbanTask :taskData="item" @deleteTask="deleteTaskFromBoard"/>
           </div>
         </div>
@@ -138,6 +138,7 @@ const triggerRender = async () => {
   background-color: var(--dark);
   border-radius: 0.75rem;
   row-gap: 1rem;
+  width: 15rem;
 
   .bucketHeaderArea {
 
