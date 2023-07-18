@@ -13,9 +13,16 @@
       </div>
       <div class="bucketBodyArea">
         <div class="kanbanTaskList">
-          <div v-for="item in tasks" :item-key="item" class="kanbanTaskArea" >
+          <draggable :list="tasks" :animation="200" group="task" item-key="id"  @add="addedTaskToBucket" @remove="removedTaskFromBucket" @start="startTaskDrag"  @end="endTaskDrag" class="kanbanTaskList" :move="checkTaskMove">
+          <!-- <div v-for="item in tasks" :key="item" class="kanbanTaskArea" >
             <kanbanTask :taskData="item" @deleteTask="deleteTaskFromBoard"/>
-          </div>
+          </div> -->
+            <template #item="{element}" class="kanbanTaskArea">
+              <div class="kanbanTaskArea">
+                <kanbanTask :taskData="element" @deleteTask="deleteTaskFromBoard"/>
+              </div>
+            </template>
+          </draggable>
         </div>
         <div class="kanbanAddTaskArea" @click="AddTask">
           <div class="iconArea">
@@ -34,24 +41,26 @@
 <script setup>
 
 import kanbanTask from './kanbanTask.vue'
-import { getTasksOfBucket, addTaskToBucket, deleteTask } from '@/utils/tauriStoreAPI'
+import { getTasksOfBucket, addTaskToBucket, deleteTask, updateTasksOfBucketsAfterDragAndDrop } from '@/utils/tauriStoreAPI'
 import { ref, onMounted } from 'vue'
-import { getCurrentInstance } from 'vue'
-
+import draggable from 'vuedraggable'
 
 //var taskTitles = [];
 const props = defineProps(['bucketData'])
 const renderComponent = ref(true);
-var tasks = []
+var tasks = await getTasksOfBucket(props.bucketData.id);
 
-const emit = defineEmits(['deleteBucket'])
+const emit = defineEmits(['deleteBucket','triggerReloadFromBucket'])
 
 
 onMounted(async () => {
+    if(tasks!=undefined || tasks == []) {
     tasks = await getTasksOfBucket(props.bucketData.id);
     console.log(tasks);
+    }
    // updateTaskTitles();
     triggerRender();
+
 })
 
 async function deleteBucket() {
@@ -74,30 +83,14 @@ async function AddTask() {
 
   //create new task
   let newTask = { position: taskPos, title: "This is a task in " + props.bucketData.id, bucket: props.bucketData.id }
-
   tasks.push(newTask)
 
   //update
   await addTaskToBucket(newTask);
-
-  //updateTaskTitles();
-
   triggerRender();
-
   return true;
 }
 
-
-
-// async function updateTaskTitles() {
-
-//   let titles = []
-//   for (const task of tasks) {
-//     titles.push(task['title'])
-//   }
-//   taskTitles = titles;
-//   return true;
-// }
 
 async function deleteTaskFromBoard(taskId) {
 
@@ -107,7 +100,6 @@ async function deleteTaskFromBoard(taskId) {
     return task.id != taskId;
   })
 
- // this.updateTaskTitles();
 
   //delete from storage
   await deleteTask(taskId);
@@ -126,6 +118,79 @@ const triggerRender = async () => {
   // Add MyComponent back in
   renderComponent.value = true;
 };
+
+
+async function endTaskDrag(e) {
+// //   console.log(e);
+  console.log(props.bucketData.id);
+//  //emit('triggerReloadFromBucket');
+//   // console.log("Dropped Task");
+//   // await triggerRender();
+//   // updateTaskPositions();
+
+//   // //Delete old id from storage
+
+//   // console.log(e.draggedContext);
+
+//   // // await deleteTask(e.draggedContext);
+
+//   // // await updateTasksOfBucket(tasks,bucketData.id);
+
+//   // // console.log("Everything Done Triggering Rerender")
+
+//   //  triggerRender();
+//   console.log("ENDED");
+//   console.log(e);
+  triggerRender();
+}
+
+
+async function removedTaskFromBucket(e) {
+  // console.log('REMOVED FROM ' + props.bucketData.id);
+  // await updateTasksOfBucket(tasks, props.bucketData.id);
+  // triggerRender();
+
+  // console.log("DONE REMOVING")
+}
+
+async function addedTaskToBucket(e) {
+  // console.log('ADDED TO  + ' + props.bucketData.id )
+  // console.log(tasks);
+  // await updateTasksOfBucketsAfterDragAndDrop(tasks,props.bucketData.id);
+  // //triggerRender();
+
+  await updateTasksOfBucketsAfterDragAndDrop(tasks, props.bucketData.id);
+  await updateTaskPositions();
+
+  // console.log("DONE Adding")
+  //emit('triggerReloadFromBucket')
+ // console.log(e)
+  triggerRender();
+}
+
+async function checkTaskMove(e) {
+  // console.log(e.draggedContext);
+  // console.log(props.bucketData.id)
+
+}
+
+
+async function startTaskDrag(e) {
+  
+  //delete this bucket 
+  await deleteTask(e.item.__draggable_context.element.id);
+  await updateTaskPositions();
+
+
+
+}
+
+
+function updateTaskPositions() {
+  for(let i = 0;i<tasks.length;i++) {
+    tasks.at(i).position = i+1;
+  }
+ }
 
 </script>
   

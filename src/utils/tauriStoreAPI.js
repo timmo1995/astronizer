@@ -45,6 +45,50 @@ export async function getTasksOfBucket(bucketId) {
 } 
 
 
+export async function updateTasksOfBucketsAfterDragAndDrop(tasks,bucketId) {
+    const store = getStore();
+    let val = await store.get("tasks");
+
+    // console.log(val);
+    // let taskIds = tasks.map(function(task) { return task.id })
+
+    // console.log(taskIds);
+    // //Delete all from val
+    // val = val.filter(function(storedTask) {
+    //     return taskIds.includes(storedTask.id)
+    // })
+    
+    // console.log(val);
+
+
+
+    //First remove all with bucket Id
+    console.log("BEFORE " + bucketId)
+    console.log(val)
+    val = val.filter(function(task) {
+        return task.bucket != bucketId;
+      })
+
+    //And now push all to val
+    console.log(val)
+
+for(let task of tasks) {
+        task.bucket = bucketId;
+        val.push(task)
+}
+
+console.log(val);
+
+    // console.log("NEW")
+    // console.log(val)
+    
+    await store.set("tasks", val);
+    await store.save();
+
+    return true;
+}
+
+
 //adds a Task
 export async function addTaskToBucket(task) {
 

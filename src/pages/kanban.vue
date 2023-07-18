@@ -15,10 +15,10 @@
           <h2>Kanban Board</h2>
         </div>
         <div class="kanbanBoard">
-        <draggable :list="buckets" :animation="200" group="bucket" ghost-class="ghost" item-key="id" @start="drag=true"  @end="endBucketDrag" class="kanbanBoard" :move="checkMove">
+        <draggable :list="buckets" :animation="200" group="bucket" item-key="id" @start="drag=true"  @end="endBucketDrag" class="kanbanBoard" :move="checkMove">
           <template #item="{element}" class="kanbanBucketArea">
             <div>
-              <kanbanBucket :bucketData="element" @deleteBucket="deleteBucket"/>
+              <kanbanBucket :bucketData="element" @deleteBucket="deleteBucket" @triggerReloadFromBucket="triggerUpdate"/>
             </div>
           </template>
         </draggable>
@@ -148,7 +148,9 @@ import draggable from 'vuedraggable'
   }
  }
 
-
+ async function triggerUpdate() {
+  triggerRender();
+ }
 
 
   </script>
@@ -185,10 +187,6 @@ import draggable from 'vuedraggable'
           transition: all 0.5s ease;
       }
 
-      .ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
-}
 
       .kanbanBucketArea {
   flex-grow: 0;     /* do not grow   - initial value: 0 */
