@@ -48,18 +48,26 @@ import draggable from 'vuedraggable'
 //var taskTitles = [];
 const props = defineProps(['bucketData'])
 const renderComponent = ref(true);
-var tasks = await getTasksOfBucket(props.bucketData.id);
+var tasks = ref(null)
+tasks.value = await getTasksOfBucket(props.bucketData.id);
 
 const emit = defineEmits(['deleteBucket','triggerReloadFromBucket'])
 
 
+//length to check if change via drag and drop occured
+var numOfTasks = tasks.value.length;
+
+
+
 onMounted(async () => {
-    if(tasks!=undefined || tasks == []) {
-    tasks = await getTasksOfBucket(props.bucketData.id);
-    console.log(tasks);
+   // if(tasks!=undefined || tasks == []) {
+    if(tasks.value==undefined) {
+    //tasks = await getTasksOfBucket(props.bucketData.id);
+    //console.log(tasks);
+    tasks.value = []
     }
    // updateTaskTitles();
-    triggerRender();
+   // triggerRender();
 
 })
 
@@ -71,8 +79,8 @@ async function deleteBucket() {
 
 async function AddTask() {
   let taskPos = 0;
-  if (tasks.length != 0) {
-    for (const task of tasks) {
+  if (tasks.value.length != 0) {
+    for (const task of tasks.value) {
       if (task['position'] > taskPos) {
         taskPos = task['position']
       }
@@ -83,7 +91,7 @@ async function AddTask() {
 
   //create new task
   let newTask = { position: taskPos, title: "This is a task in " + props.bucketData.id, bucket: props.bucketData.id }
-  tasks.push(newTask)
+  tasks.value.push(newTask)
 
   //update
   await addTaskToBucket(newTask);
@@ -96,7 +104,7 @@ async function deleteTaskFromBoard(taskId) {
 
   console.log("hi back")
   //delete from RAM
-  tasks = tasks.filter(function (task) {
+  tasks.value = tasks.value.filter(function (task) {
     return task.id != taskId;
   })
 
@@ -121,74 +129,44 @@ const triggerRender = async () => {
 
 
 async function endTaskDrag(e) {
-// //   console.log(e);
-  console.log(props.bucketData.id);
-//  //emit('triggerReloadFromBucket');
-//   // console.log("Dropped Task");
-//   // await triggerRender();
-//   // updateTaskPositions();
 
-//   // //Delete old id from storage
+//check if drag and drop was inside bucket. If yes handle new positions and update database. If not, other callbacks will overtake :)
+await updateTaskPositions();
+if(tasks.value.length==numOfTasks) {
+  await updateTasksOfBucket(tasks.value,props.bucketData.id);
+}
+//triggerRender();
 
-//   // console.log(e.draggedContext);
-
-//   // // await deleteTask(e.draggedContext);
-
-//   // // await updateTasksOfBucket(tasks,bucketData.id);
-
-//   // // console.log("Everything Done Triggering Rerender")
-
-//   //  triggerRender();
-//   console.log("ENDED");
-//   console.log(e);
-  triggerRender();
 }
 
 
 async function removedTaskFromBucket(e) {
-  // console.log('REMOVED FROM ' + props.bucketData.id);
-  // await updateTasksOfBucket(tasks, props.bucketData.id);
-  // triggerRender();
 
-  // console.log("DONE REMOVING")
+  //EMPTY CALLBACK - it would be nice to call function here to update positions in NVM storage
+  //, but this call would conflict with updateDragAndDrag as it isn´t a database and "textfile" instead
 }
 
 async function addedTaskToBucket(e) {
-  // console.log('ADDED TO  + ' + props.bucketData.id )
-  // console.log(tasks);
-  // await updateTasksOfBucketsAfterDragAndDrop(tasks,props.bucketData.id);
-  // //triggerRender();
-
-  await updateTasksOfBucketsAfterDragAndDrop(tasks, props.bucketData.id);
+  await updateTasksOfBucketsAfterDragAndDrop(e.item.__draggable_context.element.id, props.bucketData.id);
   await updateTaskPositions();
 
-  // console.log("DONE Adding")
-  //emit('triggerReloadFromBucket')
- // console.log(e)
-  triggerRender();
+  updateTasksOfBucket(tasks.value,props.bucketData.id);
+ // triggerRender();
 }
 
 async function checkTaskMove(e) {
-  // console.log(e.draggedContext);
-  // console.log(props.bucketData.id)
 
 }
 
 
 async function startTaskDrag(e) {
-  
-  //delete this bucket 
-  await deleteTask(e.item.__draggable_context.element.id);
-  await updateTaskPositions();
-
-
-
+  numOfTasks = tasks.value.length;
 }
 
 
 function updateTaskPositions() {
-  for(let i = 0;i<tasks.length;i++) {
-    tasks.at(i).position = i+1;
+  for(let i = 0;i<tasks.value.length;i++) {
+    tasks.value.at(i).position = i+1;
   }
  }
 

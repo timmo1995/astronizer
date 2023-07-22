@@ -45,7 +45,24 @@ export async function getTasksOfBucket(bucketId) {
 } 
 
 
-export async function updateTasksOfBucketsAfterDragAndDrop(tasks,bucketId) {
+export async function updateTasksOfBucketsAfterDragAndDrop(draggedID,bucketId) {
+    const store = getStore();
+    let val = await store.get("tasks");
+
+    for(let task of val) {
+        if(task.id==draggedID) {
+            task.bucket = bucketId;
+        }
+    }
+    
+    await store.set("tasks", val);
+    await store.save();
+
+    return true;
+}
+
+
+export async function updateTasksOfBucket(tasks,bucketId) {
     const store = getStore();
     let val = await store.get("tasks");
 
@@ -62,12 +79,15 @@ export async function updateTasksOfBucketsAfterDragAndDrop(tasks,bucketId) {
 
 
 
-    //First remove all with bucket Id
+    //First remove all with bucket Id and the one from the old bucket with the draggedID
     console.log("BEFORE " + bucketId)
     console.log(val)
     val = val.filter(function(task) {
         return task.bucket != bucketId;
       })
+
+    
+
 
     //And now push all to val
     console.log(val)
@@ -87,7 +107,6 @@ console.log(val);
 
     return true;
 }
-
 
 //adds a Task
 export async function addTaskToBucket(task) {
