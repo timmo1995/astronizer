@@ -41,6 +41,7 @@
 <script setup>
 
 import kanbanTask from './kanbanTask.vue'
+import bucketSettingsModal from './bucketSettingsModal.vue'
 import { getTasksOfBucket, addTaskToBucket, deleteTask, updateTasksOfBucketsAfterDragAndDrop } from '@/utils/tauriStoreAPI'
 import { ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
@@ -48,6 +49,7 @@ import draggable from 'vuedraggable'
 //var taskTitles = [];
 const props = defineProps(['bucketData'])
 const renderComponent = ref(true);
+
 var tasks = ref(null)
 tasks.value = await getTasksOfBucket(props.bucketData.id);
 
@@ -71,9 +73,13 @@ onMounted(async () => {
 
 })
 
+
+
+
 async function deleteBucket() {
   //$parent.deleteBucket(props.bucketData.id);
   emit('deleteBucket', props.bucketData.id)
+  //showBucketModal.value = true;
 }
 
 

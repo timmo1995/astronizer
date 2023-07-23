@@ -27,6 +27,11 @@
         </div>
       </div>
       </div>
+      <transition name="modal">
+        <Modal v-if="showBucketModal" >
+          <bucketSettingsModal @closeBucketModal="closeBucketModalCallback"/>
+        </Modal>
+      </transition>
     </div>
 </template>
   
@@ -37,12 +42,15 @@
   import { getBuckets, updateBuckets } from '@/utils/tauriStoreAPI'
   import { Store } from "tauri-plugin-store-api";
 import draggable from 'vuedraggable'
-
+import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
 
   var buckets= [];
   var bucketNames =  [];
   var draggedBucket = {}
   const rendComponent = ref(true);
+
+  var showBucketModal = ref(false);
+  showBucketModal.value = false;
 
   
   onMounted(async () => {
@@ -53,6 +61,10 @@ import draggable from 'vuedraggable'
       triggerRender();
     })
 
+
+    function closeBucketModalCallback() {
+  showBucketModal.value = false;
+}
     
 
   function openURL (url) {
@@ -89,16 +101,19 @@ import draggable from 'vuedraggable'
       }
 
   async function deleteBucket(bucketId) {
-        buckets = buckets.filter(function(bucket) {
-          return bucket.id != bucketId;
-        })
+        // buckets = buckets.filter(function(bucket) {
+        //   return bucket.id != bucketId;
+        // })
 
-        //update positions and store
-        updateBucketPosition();
+        // //update positions and store
+        // updateBucketPosition();
 
-        await updateBuckets(buckets);
-        await triggerRender();
-        return true;
+        // await updateBuckets(buckets);
+        // await triggerRender();
+        // return true;
+          console.log("Trying to SHow Modal")
+        showBucketModal.value = true;
+
       }
 
   function updateBucketNames() {

@@ -54,6 +54,25 @@ export async function updateTasksOfBucketsAfterDragAndDrop(draggedID,bucketId) {
             task.bucket = bucketId;
         }
     }
+
+    //ToDo: Update All the positions of all other buckets (because one is now false) and update to the new position of the dragged Item
+    //sort everything
+    val = val.sort((a,b)=> (a.bucket - b.bucket ||  a.position - b.position ));
+    for(let i=0;i<val.length;i++) {
+        if(val.at(i).bucket == bucketId) {
+            continue
+        }
+        if(i==0) {
+            val.at(i).position = 1
+        }
+        else if(val.at(i).bucketId == val.at(i-1).bucketId) {
+            val.at(i).position = val.at(i-1).position + 1;
+        }
+        else {
+            val.at(i).position = 1;
+        }
+    }
+
     
     await store.set("tasks", val);
     await store.save();
@@ -66,38 +85,18 @@ export async function updateTasksOfBucket(tasks,bucketId) {
     const store = getStore();
     let val = await store.get("tasks");
 
-    // console.log(val);
-    // let taskIds = tasks.map(function(task) { return task.id })
-
-    // console.log(taskIds);
-    // //Delete all from val
-    // val = val.filter(function(storedTask) {
-    //     return taskIds.includes(storedTask.id)
-    // })
-    
-    // console.log(val);
-
-
-
     //First remove all with bucket Id and the one from the old bucket with the draggedID
-    console.log("BEFORE " + bucketId)
-    console.log(val)
     val = val.filter(function(task) {
         return task.bucket != bucketId;
       })
 
-    
-
-
     //And now push all to val
-    console.log(val)
 
-for(let task of tasks) {
-        task.bucket = bucketId;
-        val.push(task)
-}
+    for(let task of tasks) {
+            task.bucket = bucketId;
+            val.push(task)
+    }
 
-console.log(val);
 
     // console.log("NEW")
     // console.log(val)
