@@ -8,7 +8,7 @@
           </h3>
         </div>
         <div class="bucketDeleteBtnArea">
-          <span class="material-icons" @click="deleteBucket">close</span>
+          <span class="material-icons" @click="openSettings">settings</span>
         </div>
       </div>
       <div class="bucketBodyArea">
@@ -53,7 +53,7 @@ const renderComponent = ref(true);
 var tasks = ref(null)
 tasks.value = await getTasksOfBucket(props.bucketData.id);
 
-const emit = defineEmits(['deleteBucket','triggerReloadFromBucket'])
+const emit = defineEmits(['openSettingsOfBucket','triggerReloadFromBucket'])
 
 
 //length to check if change via drag and drop occured
@@ -76,9 +76,9 @@ onMounted(async () => {
 
 
 
-async function deleteBucket() {
+async function openSettings() {
   //$parent.deleteBucket(props.bucketData.id);
-  emit('deleteBucket', props.bucketData.id)
+  emit('openSettingsOfBucket', props.bucketData.id)
   //showBucketModal.value = true;
 }
 

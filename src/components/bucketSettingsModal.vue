@@ -1,27 +1,54 @@
 <template>
     <div class="kanbanWindow">
-        <div class="kanbanBucketModal">
-            <h3>This is some Crazy Modal Slot</h3>
-            <button class="modalButton" @click="closeBucketModal">
-                Close
-            </button>
-        </div>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+            <div class="kanbanBucketModal">
+                <div class="bucketTitle">
+                    <h2>Bucket Title</h2>
+                    <div class="inputFieldForTitle">
+                        <textarea v-model="bucket.name" placeholder="add Title Here"></textarea>
+                    </div>
+                </div>
+                <button class="modalButton" @click="closeBucketModal">
+                    <span class="material-symbols-outlined">
+                    done
+                    </span>
+                </button>
+                <button class="modalButtonClose" @click="closeBucketModalAndDelete">
+                    <span class="material-symbols-outlined">
+                    delete
+                    </span>
+                </button>
+            </div>
     </div>
 </template>
 
 
 <script setup>
 
-const emit = defineEmits(['closeBucketModal'])
+const emit = defineEmits(['closeBucketModal','closeBucketModalAndDelete'])
+
+const props = defineProps(['bucketData'])
+
+var bucket = props.bucketData;
+console.log(bucket)
+
+
+
 
 function closeBucketModal(e) {
-    emit('closeBucketModal')
+    emit('closeBucketModal', bucket);
+}
+
+function closeBucketModalAndDelete(e) {
+    emit('closeBucketModalAndDelete',bucket)
 }
 
 </script>
 
 
 <style scoped lang="scss">
+@import "../assets/global.scss";
+
  .kanbanWindow {
    position: fixed;
    top: 0;
@@ -30,25 +57,98 @@ function closeBucketModal(e) {
   right: 0;
   display: flex;
   justify-content: center;
+
+
   .kanbanBucketModal {
     text-align: center;
-    background-color: white;
+    background-color: var(--dark);
     height: 500px;
     width: 500px;
     margin-top: 7%;
-    //padding: 60px 0;
+    padding: 40px 0;
+    margin-left: var(--sidebar-width);
     border-radius: 20px;
+    border-style:dotted;
+    border-width: 0.3rem;
+    border-color: var(--lighterGrey);
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    h2 {
+        color:var(--light);
+    }
+
+
+    .bucketTitle {
+
+        .inputFieldForTitle {
+            margin-top: 2rem;
+
+            textarea {
+                width: 20rem;
+                height: 3rem;
+                border-style: solid;
+                 border-color: var(--lighterGrey);
+                background-color: var(--lighterGrey);
+                font-size: 0.98rem;
+                color:white;
+                text-align: center;
+                padding-top: 0.8rem;
+            }
+
+
+
+            textarea:focus {
+                outline: none !important;
+                border:0.15rem solid var(--darkBlue);
+                
+                //box-shadow: 0 0 10px #719ECE;
+            }
+
+
+        }
+
+    }
     .modalButton {
-        background-color: #ac003e;
+        background-color: var(--lighterGrey);
         width: 150px;
         height: 40px;
         color: white;
         font-size: 14px;
         border-radius: 16px;
         margin-top: 50px;
+        
 }
+
+    .modalButton:hover {
+        transition: 0.1s ease;
+        transform: scale(1.1) 
+        //color: var(--darkBlue);
+    }
+
+
+    .modalButtonClose {
+        background-color: var(--lighterGrey);
+        width: 150px;
+        height: 40px;
+        color: var(--orange);
+        font-size: 14px;
+        border-radius: 16px;
+        margin-top: 10rem;
+    }
+
+    .modalButtonClose:hover {
+        transition: 0.1s ease;
+        transform: scale(1.1);
+        color: var(--red);
+        //color: var(--darkBlue);
+    }
+
 }
- }
+
+
+}
 
 
 

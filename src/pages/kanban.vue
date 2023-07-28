@@ -7,18 +7,26 @@
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
+
       <div class="sidebar">
         <mainSidebar />
       </div>
+      
       <div class="kanbanPage">
         <div class="kanbanHeader">
           <h2>Kanban Board</h2>
         </div>
         <div class="kanbanBoard">
+
         <draggable :list="buckets" :animation="200" group="bucket" item-key="id" @start="drag=true"  @end="endBucketDrag" class="kanbanBoard" :move="checkMove">
           <template #item="{element}" class="kanbanBucketArea">
             <div>
-              <kanbanBucket :bucketData="element" @deleteBucket="deleteBucket" @triggerReloadFromBucket="triggerUpdate"/>
+              <!-- <transition name="pop">
+                <Modal v-if="showBucketModal" >
+                  <bucketSettingsModal :bucketData="element" @closeBucketModal="closeBucketModalCallback" @closeBucketModalAndDelete="closeBucketModalAndDeleteCallback"/>
+                </Modal>
+              </transition> -->
+              <kanbanBucket :bucketData="element" @openSettingsOfBucket="openBucketSettingsCallback" @triggerReloadFromBucket="triggerUpdate"/>
             </div>
           </template>
         </draggable>
@@ -27,15 +35,29 @@
         </div>
       </div>
       </div>
-      <transition name="modal">
+      <Teleport to="body">
+        <transition name="pop">
+                <Modal v-if="showBucketModal" >
+                  <bucketSettingsModal :bucketData="buckets.at(bucketIndexForModal)" @closeBucketModal="closeBucketModalCallback" @closeBucketModalAndDelete="closeBucketModalAndDeleteCallback"/>
+                </Modal>
+         </transition>
+        </Teleport>
+      <!-- <transition name="pop">
         <Modal v-if="showBucketModal" >
           <bucketSettingsModal @closeBucketModal="closeBucketModalCallback"/>
         </Modal>
-      </transition>
+      </transition> -->
     </div>
 </template>
   
   <script setup>
+
+
+/** 
+ * ToDo: shift the logic of modal component in bucket class fir bucket modal and teleport it afterwards to this frame
+ * **/
+
+
   import mainSidebar from '~/components/mainSidebar.vue'
   import kanbanBucket from '~/components/kanbanBucket.vue'
   import { emit, listen } from '@tauri-apps/api/event'
@@ -44,10 +66,12 @@
 import draggable from 'vuedraggable'
 import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
 
-  var buckets= [];
+  var buckets = ref(true);
+  //buckets.value = [];
   var bucketNames =  [];
   var draggedBucket = {}
   const rendComponent = ref(true);
+  var bucketIndexForModal = 0;
 
   var showBucketModal = ref(false);
   showBucketModal.value = false;
@@ -55,15 +79,39 @@ import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
   
   onMounted(async () => {
       let result =  await getBuckets();
-      buckets = result;
-      console.log(buckets);
+      buckets.value = result;
+      console.log(buckets.value);
       updateBucketNames();
       triggerRender();
     })
 
 
-    function closeBucketModalCallback() {
-  showBucketModal.value = false;
+    async function closeBucketModalCallback(bucketData) {
+    for(let bucket of buckets.value) {
+      if(bucketData.id == bucket.id ) {
+        bucket = bucketData
+      }
+    }  
+
+     await updateBuckets(buckets.value);
+      showBucketModal.value = false;
+      
+    }
+
+    function openBucketSettingsCallback(openedBucket) {
+      console.log(openedBucket);
+      for(let i=0; i<buckets.value.length; i++) {
+        if(buckets.value.at(i).id == openedBucket) {
+          bucketIndexForModal = i;
+        }
+      }
+      
+      showBucketModal.value = true;
+    }
+
+async function closeBucketModalAndDeleteCallback(bucket) {
+    await deleteBucket(bucket.id);
+    showBucketModal.value = false;
 }
     
 
@@ -75,9 +123,9 @@ import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
         //get highest current id of buckets and highest position
         let highID =  0;
         var highPos = 0;
-        if(buckets.length != 0) {
+        if(buckets.value.length != 0) {
           console.log("Inside");
-          for (const bucket of buckets) {
+          for (const bucket of buckets.value) {
             if(bucket['position']> highPos) {
               highPos = bucket['position']
             }
@@ -92,33 +140,31 @@ import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
         highID= highID + 1;
         highPos= highPos + 1;
 
-        buckets.push({id: highID, name: 'New Bucket', position: highPos});
-        await updateBuckets(buckets);
+        buckets.value.push({id: highID, name: 'New Bucket', position: highPos});
+        await updateBuckets(buckets.value);
         updateBucketNames();
-        console.log(buckets);
+        console.log(buckets.value);
         await triggerRender();
         return true;
       }
 
   async function deleteBucket(bucketId) {
-        // buckets = buckets.filter(function(bucket) {
-        //   return bucket.id != bucketId;
-        // })
+        buckets.value = buckets.value.filter(function(bucket) {
+          return bucket.id != bucketId;
+        })
 
-        // //update positions and store
-        // updateBucketPosition();
+        //update positions and store
+        updateBucketPosition();
 
-        // await updateBuckets(buckets);
-        // await triggerRender();
-        // return true;
-          console.log("Trying to SHow Modal")
-        showBucketModal.value = true;
+        await updateBuckets(buckets.value);
+       // await triggerRender();
+        return true;
 
       }
 
   function updateBucketNames() {
         let names = []
-        for (const bucket of buckets) {
+        for (const bucket of buckets.value) {
           names.push(bucket['name'])
         }
         bucketNames = names;
@@ -137,7 +183,7 @@ import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
       };
 
  function orderBucketsByPosition() {
-        buckets = buckets.sort(function(a, b) { 
+        buckets.value = buckets.value.sort(function(a, b) { 
         return a.position - b.position;
         })
       }
@@ -151,15 +197,15 @@ import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
  async function endBucketDrag(e) {
         console.log("Dropped");
       await triggerRender();
-      console.log(buckets);
+      console.log(buckets.value);
       updateBucketPosition();
-      await updateBuckets(buckets);
+      await updateBuckets(buckets.value);
  }
 
 
  function updateBucketPosition() {
-  for(let i = 0;i<buckets.length;i++) {
-    buckets.at(i).position = i+1;
+  for(let i = 0;i<buckets.value.length;i++) {
+    buckets.value.at(i).position = i+1;
   }
  }
 
@@ -172,7 +218,44 @@ import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
   
   <css lang="scss">
   @import "../assets/global.scss";
+
+  .pop-enter-active,
+  .pop-leave-active {
+       transition: all 0.25s ease;
+     }
+
+    .pop-enter-from,
+    .pop-leave-to {
+    opacity: 0;
+
+    //ToDO: Transform does not work as the board height is too low (increase to bottom and create card in subdiv)
+    transform: translateY(100rem);
+    
+    }
+
+//    .pop-enter-active {
+//   animation: bounce-in 0.5s;
+// }
+// .pop-leave-active {
+//   animation: bounce-in 0.5s reverse;
+// }
+// @keyframes bounce-in {
+//   0% {
+//     transform: scale(0);
+//   }
+//   50% {
+//     transform: scale(1.25);
+//   }
+//   100% {
+//     transform: scale(1);
+//   }
+// }
   
+
+// .sidebar {
+//   position:fixed;
+// }
+
   .kanbanWindow {
       display: flex;
   }
