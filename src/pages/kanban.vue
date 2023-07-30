@@ -304,7 +304,9 @@ async function closeBucketModalAndDeleteCallback(bucket) {
       }
   
       .addKanbanBoardButton:hover {
-        color: var(--blue)
+        color: var(--blue);
+        transition: 0.1s ease;
+        transform: scale(1.2);
       }
   }
   

@@ -164,13 +164,14 @@ export async function deleteTask(idToDelete) {
 }
 
 
-export async function updateTaskInNVM(task) {
+export async function updateTaskTitleAndColorInNVM(task) {
     const store = getStore();
     let val = await store.get("tasks");
 
     for(let iterTask of val) {
         if(iterTask.id==task.id) {
             iterTask.title = task.title
+            iterTask.color = task.color;
         }
     }
     await store.set("tasks",val);

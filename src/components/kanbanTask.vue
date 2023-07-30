@@ -1,5 +1,5 @@
 <template>
-    <div class="kanbanTask"  @click="openTaskSettings">
+    <div class="kanbanTask"  @click="openTaskSettings" :style="{'background-color': 'var(--' + props.taskData.color + ')'}">
       <div class="kanbanTaskTitle">
         {{ taskData.title }}
       </div>
@@ -22,7 +22,7 @@ import taskSettingsModal from './taskSettingsModal.vue';
   import { ref, onMounted } from 'vue'
 
 
-import { updateTaskInNVM } from '../utils/tauriStoreAPI'
+import { updateTaskTitleAndColorInNVM } from '../utils/tauriStoreAPI'
 
   var showTaskModal = ref(false);
   showTaskModal.value = false;
@@ -46,17 +46,13 @@ import { updateTaskInNVM } from '../utils/tauriStoreAPI'
 
 
     async function closeTaskSettingModalCallback(task) {
-      console.log(task)
       await updateTask(task);
-
       showTaskModal.value = false;
-
     }
 
 
     async function updateTask(task) {
-      console.log(task)
-      await updateTaskInNVM(task);
+      await updateTaskTitleAndColorInNVM(task);
 
       return true;
 
@@ -92,7 +88,7 @@ import { updateTaskInNVM } from '../utils/tauriStoreAPI'
       padding-bottom: 1rem;
       padding-left: 0.3rem;
       padding-right: 0.3rem;
-      background-color: var(--lighterGrey);
+      //background-color: var(--lighterGrey);
       border-style: 0.25rem solid;
       border-radius: 0.5rem;
       font-size: 0.98rem;
@@ -108,13 +104,15 @@ import { updateTaskInNVM } from '../utils/tauriStoreAPI'
           }
   
           .material-icons:hover {
-            color: var(--blue);
+          color: var(--blue);
+          transition: 0.1s ease;
+          transform: scale(1.3);
           }
   
         }
   
       .kanbanTaskTitle {
-          color: var(--light);
+          color: var(--white);
           display:flex;
           //overflow: visible;
   }
@@ -122,6 +120,8 @@ import { updateTaskInNVM } from '../utils/tauriStoreAPI'
   }
   .kanbanTask:hover {
     cursor: pointer;
+    transition: 0.1s ease;
+    transform: scale(1.03);
   }
   
   </style>

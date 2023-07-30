@@ -96,7 +96,7 @@ async function AddTask() {
   taskPos = taskPos + 1;
 
   //create new task
-  let newTask = { position: taskPos, title: "This is a task in " + props.bucketData.id, bucket: props.bucketData.id }
+  let newTask = { position: taskPos, title: "This is a task in " + props.bucketData.id, bucket: props.bucketData.id, color: "lighterGrey"}
   tasks.value.push(newTask)
 
   //update
@@ -208,6 +208,8 @@ function updateTaskPositions() {
       .material-icons:hover {
         color: var(--blue);
         cursor: pointer;
+        transition: 0.1s ease;
+        transform: scale(1.3);
       }
     }
 

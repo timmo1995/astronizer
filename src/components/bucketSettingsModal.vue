@@ -68,7 +68,7 @@ function closeBucketModalAndDelete(e) {
     padding: 40px 0;
     margin-left: var(--sidebar-width);
     border-radius: 20px;
-    border-style:dotted;
+    //border-style:dotted;
     border-width: 0.3rem;
     border-color: var(--lighterGrey);
     display:flex;
@@ -83,13 +83,14 @@ function closeBucketModalAndDelete(e) {
     .bucketTitle {
 
         .inputFieldForTitle {
-            margin-top: 2rem;
+            padding-top: 2rem;
 
             textarea {
+                margin-top: 2rem;
                 width: 20rem;
                 height: 3rem;
                 border-style: solid;
-                 border-color: var(--lighterGrey);
+                border-color: var(--lighterGrey);
                 background-color: var(--lighterGrey);
                 font-size: 0.98rem;
                 color:white;
