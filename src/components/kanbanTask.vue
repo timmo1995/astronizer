@@ -33,8 +33,6 @@ import { updateTaskTitleAndColorInNVM } from '../utils/tauriStoreAPI'
 
 
     async function deleteTask() {
-          //this.$parent.deleteTaskFromBoard(this.taskData.id);
-      console.log("hi")
       emit('deleteTask',props.taskData.id);
     }
 
@@ -58,9 +56,6 @@ import { updateTaskTitleAndColorInNVM } from '../utils/tauriStoreAPI'
 
     }
 
-
-
-  
   </script>
   
   <style lang="scss">

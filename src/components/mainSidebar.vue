@@ -2,10 +2,7 @@
     <aside>
       <div class="headingSidebar">
         <div class="logo">
-          <img src="../assets/logo.png">
-        </div>
-        <div class="headingTextSidebar">
-          <p>T.I.M.O</p>
+          <img src="../assets/profilepicture.png">
         </div>
       </div>
   
@@ -13,18 +10,15 @@
       <div class="menu">
         <NuxtLink class="button" to="/">
           <span class="material-icons">home</span>
-          <span class="text">Home</span>
         </NuxtLink>
         <NuxtLink class="button" to="/kanban">
           <span class="material-icons">view_kanban</span>
-          <span class="text">Kanban</span>
         </NuxtLink>
       </div>
       <div class="flex" />
       <div class="menu">
         <NuxtLink to="/settings" class="button">
           <span class="material-icons">settings</span>
-          <span class="text">Settings</span>
         </NuxtLink>
       </div>
     </aside>
@@ -44,13 +38,14 @@
     width: var(--sidebar-width);
     overflow: hidden;
     min-height: 100vh;
-    padding: 1rem;
-    transition: 0.2s ease-out;
+    padding-top: 1rem;
+    text-align: center;
+    align-items: center;
   
-    @media (max-width: 768px) {
-      position: fixed;
-      z-index: 99;
-    }
+    // @media (max-width: 768px) {
+    //   position: fixed;
+    //   z-index: 99;
+    // }
   
     .flex {
       flex: 1 1 0;
@@ -58,11 +53,13 @@
   }
   
   .logo {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
+    padding-left: 0.3rem;
+    align-items: center;
     img {
-      width: 4rem;
+      width: 3rem;
     }
-    float: left;
+    //float: left;
   }
   
   .headingMenu, .button .text {
@@ -72,18 +69,19 @@
   
   .menu {
     margin: 0 -1rem;
+    padding-bottom: 0.1rem;
   
     .button {
       display: flex;
       align-items: center;
       text-decoration: none;
+      text-align: center;
   
-      padding: 0.5rem 1rem;
+      padding: 0.7rem 1.5rem;
   
       .material-icons {
-        font-size: 2rem;
+        font-size: 2.1rem;
         color: var(--light);
-        margin-right: 1rem;
       }
   
       &:hover {
@@ -125,7 +123,7 @@
   }
   
   .headingTextSidebar {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     margin-top: 1.3rem;
     text-align: center;
   }
