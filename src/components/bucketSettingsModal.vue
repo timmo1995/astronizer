@@ -103,7 +103,6 @@ function closeBucketModalAndDelete(e) {
                 outline: none !important;
                 border:0.15rem solid var(--darkBlue);
                 
-                //box-shadow: 0 0 10px #719ECE;
             }
 
 
@@ -123,8 +122,9 @@ function closeBucketModalAndDelete(e) {
 
     .modalButton:hover {
         transition: 0.1s ease;
-        transform: scale(1.1) 
+        transform: scale(1.1);
         //color: var(--darkBlue);
+        color: var(--lightgreen);
     }
 
 

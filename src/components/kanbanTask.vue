@@ -1,18 +1,34 @@
 <template>
-    <div class="kanbanTask" v-if="renderComponent">
+    <div class="kanbanTask"  @click="openTaskSettings">
       <div class="kanbanTaskTitle">
         {{ taskData.title }}
       </div>
       <div class="kanbanTaskDeleteIcon">
         <span class="material-icons" @click="deleteTask" >close</span>
       </div>
+      <Teleport to="body">
+        <transition name="pop">
+        <Modal v-if="showTaskModal">
+            <taskSettingsModal :taskData="props.taskData" @closeTaskSettingModal="closeTaskSettingModalCallback"/>
+        </Modal>
+        </transition>
+      </Teleport>
     </div>
   </template>
   
   <script setup>
 
+import taskSettingsModal from './taskSettingsModal.vue';
+  import { ref, onMounted } from 'vue'
+
+
+import { updateTaskInNVM } from '../utils/tauriStoreAPI'
+
+  var showTaskModal = ref(false);
+  showTaskModal.value = false;
+
     const props = defineProps(['taskData'])
-    const renderComponent = ref(true);
+    
     const emit = defineEmits(['deleteTask'])
 
 
@@ -22,6 +38,32 @@
       emit('deleteTask',props.taskData.id);
     }
 
+    function openTaskSettings() {
+      showTaskModal.value = true;
+      console.log("Opening Modal")
+      console.log(showTaskModal.value)
+    }
+
+
+    async function closeTaskSettingModalCallback(task) {
+      console.log(task)
+      await updateTask(task);
+
+      showTaskModal.value = false;
+
+    }
+
+
+    async function updateTask(task) {
+      console.log(task)
+      await updateTaskInNVM(task);
+
+      return true;
+
+    }
+
+
+
   
   </script>
   
@@ -29,6 +71,21 @@
   
   @import "../assets/global.scss";
   
+
+  .pop-enter-active,
+  .pop-leave-active {
+       transition: all 0.25s ease;
+     }
+
+    .pop-enter-from,
+    .pop-leave-to {
+    opacity: 0;
+
+    //ToDO: Transform does not work as the board height is too low (increase to bottom and create card in subdiv)
+    transform: translateY(100rem);
+    
+    }
+
   .kanbanTask {
       display: flex;
       padding-top: 1rem;

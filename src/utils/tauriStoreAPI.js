@@ -162,3 +162,19 @@ export async function deleteTask(idToDelete) {
     return true;
 
 }
+
+
+export async function updateTaskInNVM(task) {
+    const store = getStore();
+    let val = await store.get("tasks");
+
+    for(let iterTask of val) {
+        if(iterTask.id==task.id) {
+            iterTask.title = task.title
+        }
+    }
+    await store.set("tasks",val);
+    await store.save();
+
+    return true;
+}
