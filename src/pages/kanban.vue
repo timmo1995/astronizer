@@ -61,7 +61,7 @@
   import mainSidebar from '~/components/mainSidebar.vue'
   import kanbanBucket from '~/components/kanbanBucket.vue'
   import { emit, listen } from '@tauri-apps/api/event'
-  import { getBuckets, updateBuckets } from '@/utils/tauriStoreAPI'
+  import { getBuckets, updateBuckets, deleteAllTaskFromOneBucket } from '@/utils/tauriStoreAPI'
   import { Store } from "tauri-plugin-store-api";
 import draggable from 'vuedraggable'
 import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
@@ -158,6 +158,11 @@ async function closeBucketModalAndDeleteCallback(bucket) {
 
         await updateBuckets(buckets.value);
        // await triggerRender();
+
+
+       //Delete all Tasks from the bucket
+        await deleteAllTaskFromOneBucket(bucketId);
+
         return true;
 
       }

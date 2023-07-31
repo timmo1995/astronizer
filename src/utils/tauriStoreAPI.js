@@ -179,3 +179,21 @@ export async function updateTaskTitleAndColorInNVM(task) {
 
     return true;
 }
+
+
+
+export async function deleteAllTaskFromOneBucket(bucketId) {
+    const store = getStore();
+    let val = await store.get("tasks");
+
+    val = val.filter(function(task) {
+        return task.bucket != bucketId;
+      })
+
+      await store.set("tasks",val);
+      await store.save();
+  
+      return true;
+
+
+} 
