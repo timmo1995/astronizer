@@ -4,7 +4,7 @@
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
     "devPath": "http://localhost:3000",
-    "distDir": "../dist"
+    "distDir": "../.output"
   },
   "package": {
     "productName": "turing",
@@ -32,7 +32,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "astronizer",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
