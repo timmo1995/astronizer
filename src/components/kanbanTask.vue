@@ -8,9 +8,9 @@
       </div>
       <Teleport to="body">
         <transition name="pop">
-        <Modal v-if="showTaskModal">
+        <slot v-if="showTaskModal">
             <taskSettingsModal :taskData="props.taskData" @closeTaskSettingModal="closeTaskSettingModalCallback"/>
-        </Modal>
+        </slot>
         </transition>
       </Teleport>
     </div>
@@ -71,9 +71,7 @@ import { updateTaskTitleAndColorInNVM } from '../utils/tauriStoreAPI'
     .pop-enter-from,
     .pop-leave-to {
     opacity: 0;
-
-    //ToDO: Transform does not work as the board height is too low (increase to bottom and create card in subdiv)
-    transform: translateY(100rem);
+    transform: translateY(5rem);
     
     }
 

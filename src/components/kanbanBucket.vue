@@ -13,10 +13,7 @@
       </div>
       <div class="bucketBodyArea">
         <div class="kanbanTaskList">
-          <draggable :list="tasks" :animation="200" group="task" item-key="id"  @add="addedTaskToBucket" @remove="removedTaskFromBucket" @start="startTaskDrag"  @end="endTaskDrag" class="kanbanTaskList" :move="checkTaskMove">
-          <!-- <div v-for="item in tasks" :key="item" class="kanbanTaskArea" >
-            <kanbanTask :taskData="item" @deleteTask="deleteTaskFromBoard"/>
-          </div> -->
+          <draggable :forceFallback="true" :list="tasks" :animation="200" group="task" item-key="id"  @add="addedTaskToBucket" @remove="removedTaskFromBucket" @start="startTaskDrag"  @end="endTaskDrag" class="kanbanTaskList" :move="checkTaskMove">
             <template #item="{element}" class="kanbanTaskArea">
               <div class="kanbanTaskArea">
                 <kanbanTask :taskData="element" @deleteTask="deleteTaskFromBoard"/>
@@ -50,7 +47,7 @@ import draggable from 'vuedraggable'
 const props = defineProps(['bucketData'])
 const renderComponent = ref(true);
 
-var tasks = ref(null)
+var tasks = ref([])
 tasks.value = await getTasksOfBucket(props.bucketData.id);
 
 const emit = defineEmits(['openSettingsOfBucket','triggerReloadFromBucket'])

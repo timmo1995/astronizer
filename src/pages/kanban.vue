@@ -18,14 +18,9 @@
         </div>
         <div class="kanbanBoard">
 
-        <draggable :list="buckets" :animation="200" group="bucket" item-key="id" @start="drag=true"  @end="endBucketDrag" class="kanbanBoard" :move="checkMove">
+        <draggable :forceFallback="true" :list="buckets" :animation="200" group="bucket" item-key="id" @start="drag=true"  @end="endBucketDrag" class="kanbanBoard" :move="checkMove">
           <template #item="{element}" class="kanbanBucketArea">
             <div>
-              <!-- <transition name="pop">
-                <Modal v-if="showBucketModal" >
-                  <bucketSettingsModal :bucketData="element" @closeBucketModal="closeBucketModalCallback" @closeBucketModalAndDelete="closeBucketModalAndDeleteCallback"/>
-                </Modal>
-              </transition> -->
               <kanbanBucket :bucketData="element" @openSettingsOfBucket="openBucketSettingsCallback" @triggerReloadFromBucket="triggerUpdate"/>
             </div>
           </template>
@@ -37,16 +32,11 @@
       </div>
       <Teleport to="body">
         <transition name="pop">
-                <Modal v-if="showBucketModal" >
+                <slot v-if="showBucketModal" >
                   <bucketSettingsModal :bucketData="buckets.at(bucketIndexForModal)" @closeBucketModal="closeBucketModalCallback" @closeBucketModalAndDelete="closeBucketModalAndDeleteCallback"/>
-                </Modal>
+                </slot>
          </transition>
         </Teleport>
-      <!-- <transition name="pop">
-        <Modal v-if="showBucketModal" >
-          <bucketSettingsModal @closeBucketModal="closeBucketModalCallback"/>
-        </Modal>
-      </transition> -->
     </div>
 </template>
   
@@ -66,7 +56,7 @@
 import draggable from 'vuedraggable'
 import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
 
-  var buckets = ref(true);
+  var buckets = ref(null);
   //buckets.value = [];
   var bucketNames =  [];
   var draggedBucket = {}
@@ -234,7 +224,7 @@ async function closeBucketModalAndDeleteCallback(bucket) {
     opacity: 0;
 
     //ToDO: Transform does not work as the board height is too low (increase to bottom and create card in subdiv)
-    transform: translateY(100rem);
+    transform: translateY(5rem);
     
     }
 
