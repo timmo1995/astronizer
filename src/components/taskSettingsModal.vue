@@ -19,6 +19,10 @@
                         <span class="greenDot" @click="clickColorCallback('green')"></span>
                     </div>
                 </div>
+                <div class="inputForDueDate">
+                    <h3>Due Date</h3>
+                    <VueDatePicker  class="datePicker" v-model="task.dueDate" :clearable="true" dark></VueDatePicker>
+                </div>
                 <button class="modalButton" @click="closeSettings">
                     <span class="material-symbols-outlined">
                     done
@@ -32,6 +36,8 @@
 <script setup>
 import "../pages/kanban.vue";
 import { isProxy, toRaw } from 'vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 
 
 const emit = defineEmits(['closeTaskSettingModal'])
@@ -228,6 +234,15 @@ function clickColorCallback(selectedColor) {
    }
 
 
+.inputForDueDate  {
+    color:var(--light);
+    padding-top: 2rem;
+
+    .datePicker {
+        padding-top: 1rem;
+    }
+}
+   
 }
 
 

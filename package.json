@@ -17,9 +17,12 @@
     "nuxt": "^3.6.1"
   },
   "dependencies": {
+    "@vuepic/vue-datepicker": "^5.4.0",
+    "apexcharts": "^3.41.1",
     "sass": "^1.63.6",
     "tauri-plugin-sql-api": "github:tauri-apps/tauri-plugin-sql#v1",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",
+    "vue3-apexcharts": "^1.4.4",
     "vuedraggable": "^4.1.0"
   }
 }

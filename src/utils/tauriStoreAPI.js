@@ -172,6 +172,7 @@ export async function updateTaskTitleAndColorInNVM(task) {
         if(iterTask.id==task.id) {
             iterTask.title = task.title
             iterTask.color = task.color;
+            iterTask.dueDate = task.dueDate;
         }
     }
     await store.set("tasks",val);

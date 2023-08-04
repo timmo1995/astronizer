@@ -11,7 +11,10 @@
         <mainSidebar />
       </div>
       <div class="IndexPage">
-        <div class="comingSoonHeader">
+        <div class="chart">
+          <apexchart :key="series" width="500" height="100" type="bar" :options="options" :series="series"></apexchart >
+        </div>
+        <!-- <div class="comingSoonHeader">
           <div class="constLogo">
             <span class="material-icons">engineering</span>
           </div>
@@ -23,33 +26,67 @@
               <p>This site is under contruction. Idea:  Start Dashboard </p>
             </div>
           </div>
-        </div>
+        </div> -->
+
       </div>
     </div>
   </template>
   
-  <script>
+  <script setup>
   // import SystemInformation from '@/components/SystemInformation.vue'
-  import mainSidebar from '~/components/mainSidebar.vue'
-  
-  export default {
-  
-    name: 'IndexPage',
-    components: {
-      // SystemInformation
-      mainSidebar
-    },
-    data () {
-      return {
-        externalContent: ''
-      }
-    },
-    methods: {
-      openURL (url) {
-        window.open(url)
-      }
+  import mainSidebar from '~/components/mainSidebar.vue';
+  import { VueApexCharts } from "vue3-apexcharts";
+
+  var options = {
+        chart: {
+          id: 'vuechart-example'
+        },
+        xaxis: {
+          categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+        }
     }
-  }
+
+
+    var series = [{
+        name: 'series-1',
+        data: [30, 40, 45, 50, 49, 60, 70, 91]
+      }]
+
+
+//   export default {
+  
+//     name: 'IndexPage',
+//     components: {
+//     // SystemInformation
+//     mainSidebar,
+//     VueApexCharts,
+    
+
+// },
+//     data () {
+//       return {
+//         el: '#appl',
+//         externalContent: '',
+//         options: {
+//         chart: {
+//           id: 'vuechart-example'
+//         },
+//         xaxis: {
+//           categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998]
+//         }
+//       },
+//       series: [{
+//         name: 'series-1',
+//         data: [30, 40, 45, 50, 49, 60, 70, 91]
+//       }]
+//       }
+//     },
+//     methods: {
+//       openURL (url) {
+//         window.open(url)
+//       }
+//     }
+//   }
   </script>
   
   <style lang="scss">
@@ -66,6 +103,10 @@
   flex-basis: 100%;
   flex-direction: column;
   
+    .chart {
+      background-color: white;
+    }
+
     .comingSoonHeader {
       font-size: 2rem;
       padding-bottom: 5rem;

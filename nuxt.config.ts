@@ -2,5 +2,8 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
-  srcDir: './src'
+  srcDir: './src',
+  build: {
+    transpile: ['@vuepic/vue-datepicker']
+}
 })
