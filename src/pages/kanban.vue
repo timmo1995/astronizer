@@ -54,7 +54,6 @@
   import { getBuckets, updateBuckets, deleteAllTaskFromOneBucket } from '@/utils/tauriStoreAPI'
   import { Store } from "tauri-plugin-store-api";
 import draggable from 'vuedraggable'
-import bucketSettingsModal from '~/components/bucketSettingsModal.vue';
 
   var buckets = ref(null);
   //buckets.value = [];

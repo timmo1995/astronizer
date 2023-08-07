@@ -93,7 +93,7 @@ async function AddTask() {
   taskPos = taskPos + 1;
 
   //create new task
-  let newTask = { position: taskPos, title: "This is a task in " + props.bucketData.id, bucket: props.bucketData.id, color: "lighterGrey"}
+  let newTask = { position: taskPos, title: "New Task", bucket: props.bucketData.id, color: "lighterGrey"}
   tasks.value.push(newTask)
 
   //update

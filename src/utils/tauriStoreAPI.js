@@ -198,3 +198,42 @@ export async function deleteAllTaskFromOneBucket(bucketId) {
 
 
 } 
+
+
+//get history
+
+export async function getHistory() {
+    const store = getStore();
+    var val = await store.get("taskHistory");
+    console.log(val);
+    //Check if null and if yes introduce
+    if(val==null) {
+        let date = new Date();
+        date.setDate(date.getDate() -1);
+        val = {
+            overallTasks: Array(30).fill(0),
+            lastUpdate: date
+        }
+        await store.set("taskHistory",val);
+        await store.save();
+    }
+
+    return val;
+    
+
+}
+
+//Set History
+export async function setHistory(newHistory) {
+    const store = getStore();
+    await store.set("taskHistory",newHistory);
+    await store.save();
+    return;
+}
+
+
+export async function getAllTasks() {
+    const store = getStore();
+    var val = await store.get("tasks");
+    return val;
+}
