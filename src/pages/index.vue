@@ -54,6 +54,9 @@ fetchFlag.value = true
 var itemsWithNextDueDate = ref(true)
 itemsWithNextDueDate.value = []
 
+
+await initFile();
+
 const COLORS = {
     lighterGrey: '#2c2c2c',
     orange: '#FFA500',
@@ -62,6 +65,10 @@ const COLORS = {
     blue: '#3a36fa',
     green: '#006400',
 }
+
+
+//First check if dat file is present. If not, create default
+
 
 
 
@@ -224,7 +231,6 @@ onMounted(async () => {
     })
 
 async function getDataForChartTopLeft() {
-  
   var seriesData  = []
   for(const bucket of buckets.value) {
     let length  = (await getTasksOfBucket(bucket.id)).length

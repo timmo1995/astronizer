@@ -4,6 +4,12 @@ import { Store } from "tauri-plugin-store-api";
 var FILE = "data.dat";
 
 
+
+var INIT_BUCKETS = [{id:1,name:"Open",position:1},{id:2,name:"In Progress",position:2}]
+
+var INIT_TASKS  = [{bucket:1,color:"green",dueDate:"2023-08-04T18:33:00.000Z",id:1,position:1,title:"Sleep"},{bucket:2,color:"red",dueDate:"2023-08-07T18:33:00.000Z",id:3,position:2,title:"Deploy"}]
+
+
 function getStore() {
     console.log("Get store")
     const store = new Store(FILE);
@@ -236,4 +242,22 @@ export async function getAllTasks() {
     const store = getStore();
     var val = await store.get("tasks");
     return val;
+}
+
+
+export async function initFile() {
+    const store = getStore();
+    let buckets = await store.get("buckets");
+    let tasks = await store.get("tasks");
+
+    console.log(store.path);
+
+    //If all of them are zero its init startup time
+    if(buckets==null && tasks == null) {
+        store.set("tasks",INIT_TASKS);
+        store.set("buckets",INIT_BUCKETS);
+    }
+
+    await store.save();
+
 }
