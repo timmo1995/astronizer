@@ -57,7 +57,7 @@
     padding-left: 0.3rem;
     align-items: center;
     img {
-      width: 3rem;
+      width: 2.7rem;
     }
     //float: left;
   }
@@ -77,7 +77,7 @@
       text-decoration: none;
       text-align: center;
   
-      padding: 0.7rem 1.5rem;
+      padding: 0.7rem 1rem;
   
       .material-icons {
         font-size: 2.1rem;

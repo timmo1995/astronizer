@@ -252,12 +252,17 @@ async function closeBucketModalAndDeleteCallback(bucket) {
 
   .kanbanWindow {
       display: flex;
+
+    .sidebar {
+      position:fixed;
+    }
+
   }
   
   .kanbanPage {
   display: flex;
   flex-direction:column;
-  padding-left: 5rem;
+  padding-left: 8rem;
   
   }
   

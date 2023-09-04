@@ -28,10 +28,12 @@
           </div>
           <div class="todaysTaskBox">
             <h2 class="todaysTaskHeader">Tasks For Today</h2>
-            <div v-for="item in itemsWithNextDueDate">
-              <div class="taskForToday">
-                {{ item }}  
-              </div>    
+            <div class="taskTodayList">
+              <div v-for="item in itemsWithNextDueDate" >
+                <div class="taskForToday">
+                  {{ item }}  
+                </div>    
+              </div>
             </div>
           </div>
         </div>
@@ -333,14 +335,9 @@ let result = []
 if(tasks.length==0) {
   result.push('No Open Tasks For Today')
 }
-else if(tasks.length <= 4) {
+else {
   for(let task of tasks) {
     result.push(task.title)
-  }
-}
-else {
-  for(let i=0;i<4;i++) {
-    result.push(tasks.at(i).title)
   }
 }
 itemsWithNextDueDate.value  = result;
@@ -419,6 +416,14 @@ itemsWithNextDueDate.value  = result;
   .todaysTaskHeader {
     padding-top: 1rem;
     padding-bottom: 2rem;
+
+  }
+
+  .taskTodayList {
+    height: 18rem;
+    overflow: hidden;
+  // overflow-y: scroll;
+
   }
 
   .taskForToday {
@@ -429,6 +434,7 @@ itemsWithNextDueDate.value  = result;
     border-radius: 1rem;
     margin-bottom: 0.8rem;
     font-size: 1.2rem;
+
    
 
   }
@@ -441,7 +447,6 @@ itemsWithNextDueDate.value  = result;
 
 }
 
-
   }
-  
+
   </style>
