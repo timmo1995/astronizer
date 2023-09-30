@@ -10,6 +10,8 @@ var INIT_BUCKETS = [{id:1,name:"Open",position:1},{id:2,name:"In Progress",posit
 var INIT_TASKS  = [{bucket:1,color:"green",dueDate:"2023-08-04T18:33:00.000Z",id:1,position:1,title:"Sleep"},{bucket:2,color:"red",dueDate:"2023-08-07T18:33:00.000Z",id:3,position:2,title:"Deploy"}]
 
 
+var INIT_NOTES = [{id:1, title:"Your First Node", text:"Some Placeholder for your notes "}]
+
 function getStore() {
     console.log("Get store")
     const store = new Store(FILE);
@@ -260,4 +262,34 @@ export async function initFile() {
 
     await store.save();
 
+}
+
+export async function initNotesOnInitialStart() {
+    const store  = getStore();
+    let notes  = await store.get("notes");
+
+    if(notes==null) {
+        store.set("notes",INIT_NOTES);
+    }
+
+    await store.save();
+    return;
+}
+
+export async function getNotes() {
+    const store = getStore();
+    let notes = await store.get("notes");
+    
+    return notes;
+
+}
+
+
+export async function updateNotes(updatedNotes) {
+    const store = getStore();
+
+    store.set("notes",updatedNotes)
+    store.save();
+
+    return;
 }

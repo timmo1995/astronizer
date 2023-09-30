@@ -24,9 +24,9 @@
         <div class="row">
           <div class="chartBox" v-if="fetchFlag">
             <h2>Tasks Trend Last 30 Working Days</h2>
-            <apexchart class="topRightChart" width="800" height="350" type="line" :options="chartOptionsBottomLeft" :series="bottomLeftSeries"></apexchart >
+            <apexchart class="topRightChart" width="1200" height="350" type="line" :options="chartOptionsBottomLeft" :series="bottomLeftSeries"></apexchart >
           </div>
-          <div class="todaysTaskBox">
+          <!-- <div class="todaysTaskBox">
             <h2 class="todaysTaskHeader">Tasks For Today</h2>
             <div class="taskTodayList">
               <div v-for="item in itemsWithNextDueDate" >
@@ -35,7 +35,7 @@
                 </div>    
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
 
       </div>
@@ -45,7 +45,7 @@
   <script setup>
 
   import mainSidebar from '~/components/mainSidebar.vue';
-  import { VueApexCharts } from "vue3-apexcharts";
+//  import { VueApexCharts } from "vue3-apexcharts";
   import { getBuckets, getHistory } from '@/utils/tauriStoreAPI'
 
 var stuff = ref([])
@@ -382,7 +382,10 @@ itemsWithNextDueDate.value  = result;
     justify-content: center;
     background-color: var(--dark);
     padding: 0.5rem;
+    padding-top: 1rem;
     border-radius: 1.2rem;
+    //margin-bottom: 5rem;
+
 
     .topLeftChart {
       align-items: center;
@@ -391,6 +394,10 @@ itemsWithNextDueDate.value  = result;
     .topRightChart {
       align-items: center;
       padding-left: 2rem;
+    }
+
+    .bottomRightChart {
+
     }
 
     .taskColorAssignmentHeader {

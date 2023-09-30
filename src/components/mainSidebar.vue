@@ -14,6 +14,9 @@
         <NuxtLink class="button" to="/kanban">
           <span class="material-icons">view_kanban</span>
         </NuxtLink>
+        <!-- <NuxtLink class="button" to="/notes">
+          <span class="material-icons">description</span>
+        </NuxtLink> -->
       </div>
       <div class="flex" />
       <div class="menu">
